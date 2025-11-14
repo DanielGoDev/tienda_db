@@ -1,0 +1,35 @@
+# --- Carpetas de Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# --- Entorno virtual ---
+venv/
+env/
+.venv/
+.env/
+
+# --- Configuración local ---
+*.log
+*.sqlite3
+
+# --- Archivos de entorno ---
+.env
+
+# --- Archivos del sistema ---
+.DS_Store
+Thumbs.db
+
+# --- Configuración de VS Code ---
+.vscode/
+
+# --- Archivos de compilación Tkinter (si los hubiera) ---
+build/
+dist/
+
+# --- Configuración de PyInstaller ---
+*.spec
+
+# --- Elementos de cache ---
+.cache/
