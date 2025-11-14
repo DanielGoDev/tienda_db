@@ -33,3 +33,7 @@ class ProductoServicio:
     def disminuir_stock(self, id_producto, cantidad):
         """Intenta disminuir el stock de forma atómica. Retorna True/False."""
         return self.repo.disminuir_stock_atomico(id_producto, cantidad)
+
+    def reducir_stock(self, id_producto, cantidad):
+        """Alias por compatibilidad con la UI/otros servicios."""
+        return self.disminuir_stock(id_producto, cantidad)

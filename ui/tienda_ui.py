@@ -13,7 +13,7 @@ class TiendaUI:
 
         self.root = tk.Toplevel()
         self.root.title("Tienda")
-        self.root.geometry("900x600")
+        self.root.geometry("900x900")
 
         # Productos
         tk.Label(self.root, text=f"Tienda - Usuario: {self.usuario['nombre']}",
@@ -25,17 +25,17 @@ class TiendaUI:
         tk.Label(frame_prod, text="Productos disponibles",
                  font=("Arial", 12, "bold")).pack(anchor="w")
 
+        # No mostrar el `id` como columna; lo guardamos en el `iid` de cada fila
         self.tree = ttk.Treeview(
             frame_prod,
-            columns=("id", "nombre", "categoria", "precio", "stock"),
-            show="headings"
+            columns=("nombre", "categoria", "precio", "stock"),
+            show="headings",
+            displaycolumns=("nombre", "categoria", "precio", "stock")
         )
-        self.tree.heading("id", text="ID")
         self.tree.heading("nombre", text="Nombre")
         self.tree.heading("categoria", text="Categoría")
         self.tree.heading("precio", text="Precio")
         self.tree.heading("stock", text="Stock")
-        self.tree.column("id", width=0)
 
         self.tree.pack(fill="both", expand=True)
 
@@ -99,11 +99,12 @@ class TiendaUI:
         self.tree.delete(*self.tree.get_children())
         for p in self.servicio_producto.ver_todos():
             id_str = str(p["_id"])
+            # Guardar id en el iid, pero no mostrarlo en las columnas
             self.tree.insert("", "end", iid=id_str,
-                             values=(id_str, p["nombre"],
-                                     p.get("categoria", ""),
-                                     p.get("precio", 0),
-                                     p.get("stock", 0)))
+                     values=(p["nombre"],
+                         p.get("categoria", ""),
+                         p.get("precio", 0),
+                         p.get("stock", 0)))
 
     # -------------------------------------------------------------
 
@@ -166,5 +167,25 @@ class TiendaUI:
 
     def cerrar_sesion(self):
         self.root.destroy()
-        from ui.login_ui import LoginUI
-        LoginUI().run()
+        # Volver al login usando la función de `app.py` que crea la ventana
+        # Import local para evitar ciclos al importar módulos al inicio
+        try:
+            import app
+            app.abrir_login()
+        except Exception:
+            # Si por alguna razón no se puede usar `app`, abrir el login mínimo
+            from ui.login_ui import LoginUI
+            root = __import__('tkinter').Tk()
+            # LoginUI espera (root, on_login_exitoso, on_abrir_registro)
+            # Pasamos callbacks simples que cierran la ventana si no hay flujo superior.
+            def ok(u):
+                root.destroy()
+                try:
+                    app.abrir_login()
+                except Exception:
+                    pass
+
+            def abrir_reg():
+                root.destroy()
+
+            LoginUI(root, ok, abrir_reg)
